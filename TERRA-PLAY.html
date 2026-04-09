@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terra Play 🍔</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  text-align:center;
+  background: linear-gradient(135deg, #111, #2c2c2c);
+  color:white;
+}
+
+h1 {
+  margin-top:10px;
+  font-size:24px;
+}
+
+#gameArea {
+  position:relative;
+  width:100%;
+  height:70vh;
+  overflow:hidden;
+}
+
+.burger {
+  position:absolute;
+  width:80px;
+  cursor:pointer;
+  transition: transform 0.1s;
+}
+
+.burger:active {
+  transform: scale(1.2);
+}
+
+#scoreBoard {
+  font-size:18px;
+  margin:10px;
+}
+
+#endScreen {
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#000000ee;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  padding:20px;
+}
+
+button {
+  padding:12px 20px;
+  font-size:16px;
+  border:none;
+  border-radius:10px;
+  margin-top:10px;
+  cursor:pointer;
+}
+
+#reviewBtn {
+  background:#ffcc00;
+  color:black;
+}
+
+#restartBtn {
+  background:#ff5733;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🍔 Atrapa la hamburguesa</h1>
+<div id="scoreBoard">
+Puntos: <span id="score">0</span> | Tiempo: <span id="time">20</span>s
+</div>
+
+<div id="gameArea"></div>
+
+<div id="endScreen">
+  <h2 id="resultText"></h2>
+  <p>Muestra esto en caja 🎁</p>
+  <h3 id="codeText"></h3>
+
+  <button id="reviewBtn" onclick="goReview()">⭐ Dejar reseña</button>
+  <button id="restartBtn" onclick="restartGame()">🔄 Jugar otra vez</button>
+</div>
+
+<script>
+let score = 0;
+let time = 20;
+let gameRunning = true;
+
+const gameArea = document.getElementById("gameArea");
+
+function createBurger() {
+  if (!gameRunning) return;
+
+  let burger = document.createElement("img");
+  burger.src = "https://cdn-icons-png.flaticon.com/512/3075/3075977.png";
+  burger.className = "burger";
+  burger.style.left = Math.random()*90 + "%";
+  burger.style.top = "0px";
+
+  burger.onclick = function() {
+    score++;
+    document.getElementById("score").innerText = score;
+    burger.remove();
+  };
+
+  gameArea.appendChild(burger);
+
+  let fall = setInterval(()=>{
+    burger.style.top = (burger.offsetTop + 6) + "px";
+
+    if (burger.offsetTop > window.innerHeight) {
+      burger.remove();
+      clearInterval(fall);
+    }
+
+    if (!gameRunning) {
+      burger.remove();
+      clearInterval(fall);
+    }
+  },40);
+}
+
+setInterval(createBurger, 800);
+
+let timer = setInterval(()=>{
+  if (!gameRunning) return;
+
+  time--;
+  document.getElementById("time").innerText = time;
+
+  if (time <= 0) {
+    endGame();
+  }
+},1000);
+
+function endGame() {
+  gameRunning = false;
+  clearInterval(timer);
+
+  let result = document.getElementById("resultText");
+  let code = document.getElementById("codeText");
+
+  if (score >= 15) {
+    result.innerHTML = "🎉 ¡GANASTE CAFÉ ESPECIAL DE TERRA!";
+    code.innerHTML = "Código: TERRA-CAFE";
+  } else {
+    result.innerHTML = "😄 ¡Casi! Intenta de nuevo";
+    code.innerHTML = "Sigue jugando para ganar ☕";
+  }
+
+  document.getElementById("endScreen").style.display = "flex";
+}
+
+function restartGame() {
+  location.reload();
+}
+
+function goReview() {
+  window.location.href = "https://g.page/r/CRgfgSx47NtyEAE/review";
+}
+</script>
+
+</body>
+</html>
